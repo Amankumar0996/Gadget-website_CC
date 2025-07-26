@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gadget MiSt - Latest Gadget Updates</title>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-light: #f4f4f4;
+      --bg-dark: #111;
+      --text-light: #333;
+      --text-dark: #ddd;
+      --card-bg-light: white;
+      --card-bg-dark: #222;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.light-mode {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    body.dark-mode {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    header {
+      background-color: var(--bg-dark);
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+      position: relative;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 3px solid white;
+      width: 0;
+      animation: typing 3s steps(20, end) forwards, blink 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 15ch; }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    nav.desktop-nav {
+      background: #222;
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem;
+    }
+
+    nav.desktop-nav a {
+      color: #ddd;
+      margin: 0 1rem;
+      text-decoration: none;
+    }
+
+    nav.desktop-nav a:hover {
+      color: #fff;
+    }
+
+    .mobile-nav-toggle {
+      display: none;
+      position: absolute;
+      top: 1.2rem;
+      left: 1.2rem;
+      width: 30px;
+      height: 24px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .mobile-nav-toggle span {
+      display: block;
+      height: 4px;
+      background: white;
+      margin: 5px 0;
+      transition: 0.4s;
+      border-radius: 2px;
+    }
+
+    .mobile-nav-toggle.open span:nth-child(1) {
+      transform: rotate(45deg) translateY(10px);
+    }
+
+    .mobile-nav-toggle.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .mobile-nav-toggle.open span:nth-child(3) {
+      transform: rotate(-45deg) translateY(-10px);
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: #111;
+      color: white;
+      padding-top: 4rem;
+      transition: left 0.4s ease;
+      z-index: 999;
+    }
+
+    .side-menu.active {
+      left: 0;
+    }
+
+    .side-menu a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      color: #ddd;
+      text-decoration: none;
+      border-bottom: 1px solid #333;
+      transform: translateX(-20px);
+      opacity: 0;
+      animation: slideIn 0.4s forwards;
+    }
+
+    .side-menu a:nth-child(1) { animation-delay: 0.1s; }
+    .side-menu a:nth-child(2) { animation-delay: 0.2s; }
+    .side-menu a:nth-child(3) { animation-delay: 0.3s; }
+    .side-menu a:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes slideIn {
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 998;
+    }
+
+    .overlay.active {
+      display: block;
+    }
+
+    .search-bar {
+      position: absolute;
+      top: 1rem;
+      right: 3.5rem;
+      width: 0;
+      overflow: hidden;
+      transition: width 0.4s ease;
+      background: white;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      padding: 0 0.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .search-bar input {
+      border: none;
+      outline: none;
+      padding: 0.5rem;
+      width: 100%;
+    }
+
+    .search-bar.expanded {
+      width: 200px;
+    }
+
+    .toggle-theme {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.2rem;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .hero {
+      background: url('https://source.unsplash.com/1600x500/?technology,gadget') no-repeat center center/cover;
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-shadow: 1px 1px 4px #000;
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 1rem;
+      border-radius: 10px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+
+    .card {
+      background: var(--card-bg-light);
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: 0.3s;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    body.dark-mode .card {
+      background: var(--card-bg-dark);
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .card h3 {
+      margin: 1rem 0 0.5rem;
+    }
+
+    .card p {
+      color: #555;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .card.reveal {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 0.6s ease;
+    }
+
+    .sidebar {
+      background: var(--card-bg-light);
+      padding: 1.5rem;
+      max-width: 250px;
+      border-radius: 10px;
+      margin: 2rem auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    body.dark-mode .sidebar {
+      background: var(--card-bg-dark);
+    }
+
+    .category {
+      cursor: pointer;
+      padding: 0.5rem 0;
+      font-weight: bold;
+    }
+
+    .tags {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .category.active + .tags {
+      max-height: 100px;
+    }
+
+    .tags span {
+      display: inline-block;
+      margin: 5px;
+      background: #e0e0e0;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+    }
+
+    body.dark-mode .tags span {
+      background: #444;
+      color: #fff;
+    }
+
+    footer {
+      background: #111;
+      color: #ccc;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      nav.desktop-nav {
+        display: none;
+      }
+
+      .mobile-nav-toggle {
+        display: block;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body class="light-mode">
+
+  <header>
+    <div class="mobile-nav-toggle" id="mobileNavToggle">
+      <span></span><span></span><span></span>
+    </div>
+
+    <div class="search-bar" id="searchBar">
+      <input type="text" placeholder="Search gadgets..." />
+    </div>
+
+    <div class="toggle-theme" id="toggleTheme">
+      <i data-lucide="moon"></i>
+    </div>
+
+    <h1>Gadget Pulse</h1>
+    <p>Your daily dose of tech trends & gadget reviews</p>
+  </header>
+
+  <nav class="desktop-nav">
+    <a href="#"><i data-lucide="home"></i> Home</a>
+    <a href="#"><i data-lucide="newspaper"></i> News</a>
+    <a href="#"><i data-lucide="star"></i> Reviews</a>
+    <a href="#"><i data-lucide="mail"></i> Contact</a>
+  </nav>
+
+  <div class="side-menu" id="sideMenu">
+    <a href="#"><i data-lucide="home"></i> Home</a>
+    <a href="#"><i data-lucide="newspaper"></i> News</a>
+    <a href="#"><i data-lucide="star"></i> Reviews</a>
+    <a href="#"><i data-lucide="mail"></i> Contact</a>
+  </div>
+  <div class="overlay" id="overlay"></div>
+
+  <section class="hero">
+    <h2>Stay Ahead with the Latest in Tech</h2>
+  </section>
+
+  <aside class="sidebar">
+    <div class="category" onclick="toggleCategory(this)">Phones ▾</div>
+    <div class="tags">
+      <span>iPhone</span><span>Samsung</span><span>OnePlus</span>
+    </div>
+    <div class="category" onclick="toggleCategory(this)">Laptops ▾</div>
+    <div class="tags">
+      <span>MacBook</span><span>Gaming</span><span>Ultrabook</span>
+    </div>
+    <div class="category" onclick="toggleCategory(this)">Wearables ▾</div>
+    <div class="tags">
+      <span>Smartwatches</span><span>Fitness Bands</span><span>AR Glasses</span>
+    </div>
+  </aside>
+
+  <section class="content">
+    <div class="card">
+      <img src="https://source.unsplash.com/400x250/?smartphone" alt="Smartphone" />
+      <h3>Top 5 Smartphones of 2025</h3>
+      <p>Explore the most innovative features and performance benchmarks of this year's flagship devices.</p>
+    </div>
+    <div class="card">
+      <img src="https://source.unsplash.com/400x250/?laptop,tech" alt="Laptop" />
+      <h3>Best Laptops for Creators</h3>
+      <p>From ultra-thin designs to powerful GPUs, here are the laptops content creators love right now.</p>
+    </div>
+    <div class="card">
+      <img src="https://source.unsplash.com/400x250/?wearable,smartwatch" alt="Smartwatch" />
+      <h3>Next-Gen Wearables</h3>
+      <p>Discover the latest smartwatches and fitness bands with health monitoring and sleek designs.</p>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Gadget Pulse | Designed for tech enthusiasts
+  </footer>
+
+  <script>
+    // IntersectionObserver for cards
+    const cards = document.querySelectorAll('.card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    cards.forEach(card => observer.observe(card));
+
+    // Toggle menu
+    const toggle = document.getElementById('mobileNavToggle');
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('overlay');
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('open');
+      sideMenu.classList.toggle('active');
+      overlay.classList.toggle('active');
+    });
+    overlay.addEventListener('click', () => {
+      toggle.classList.remove('open');
+      sideMenu.classList.remove('active');
+      overlay.classList.remove('active');
+    });
+
+    // Dark mode toggle
+    const themeToggle = document.getElementById('toggleTheme');
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      document.body.classList.toggle('light-mode');
+      const icon = themeToggle.querySelector('i');
+      icon.setAttribute('data-lucide', document.body.classList.contains('dark-mode') ? 'sun' : 'moon');
+      lucide.createIcons();
+    });
+
+    // Search bar expand
+    const searchBar = document.getElementById('searchBar');
+    searchBar.addEventListener('click', (e) => {
+      searchBar.classList.toggle('expanded');
+      e.stopPropagation();
+    });
+    document.body.addEventListener('click', () => {
+      searchBar.classList.remove('expanded');
+    });
+
+    // Sidebar category toggle
+    function toggleCategory(el) {
+      el.classList.toggle('active');
+      const next = el.nextElementSibling;
+      next.style.maxHeight = next.style.maxHeight ? null : next.scrollHeight + "px";
+    }
+
+    // Load Lucide icons
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>
